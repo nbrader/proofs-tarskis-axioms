@@ -15,13 +15,22 @@ Proof.
   - apply congruenceSym with (x := y) (y := x).
 Qed.
 
-(* Theorem congruenceBinTrans : forall u v w x y z : Point, (Congruent u v w x /\ Congruent w x y z) -> Congruent u v y z.
+Theorem congruenceBinSym : forall w x y z : Point, Congruent w x y z -> Congruent y z w x.
+Proof.
+  intros.
+  apply congruenceTrans with (u := w) (v := x) (w := y) (x := z) (y := w) (z := x).
+  split.
+  - apply H.
+  - apply congruenceBinRefl.
+Qed.
+
+Theorem congruenceBinTrans : forall u v w x y z : Point, (Congruent u v w x /\ Congruent w x y z) -> Congruent u v y z.
 Proof.
   intros.
   destruct H.
-  assert (Congruent u v u v) by apply congruenceBinRefl.
-  apply congruenceTrans with (u := u) (v := v) (w := u) (x := v) (y := y) (z := z).
+  apply congruenceBinSym in H.
+  apply congruenceTrans with (u := w) (v := x) (w := u) (x := v) (y := y) (z := z).
   split.
-  - apply H1.
-  - 
-Qed. *)
+  - apply H.
+  - apply H0.
+Qed.
