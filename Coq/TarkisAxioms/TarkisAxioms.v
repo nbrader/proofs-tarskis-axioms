@@ -11,8 +11,8 @@ Proof.
   intros.
   apply congruenceTrans with (u := y) (v := x) (w := x) (x := y) (y := x) (z := y).
   split.
-  - apply congruenceSym with (x := y) (y := x).
-  - apply congruenceSym with (x := y) (y := x).
+  - apply congruenceSym.
+  - apply congruenceSym.
 Qed.
 
 Theorem congruenceBinSym : forall w x y z : Point, Congruent w x y z -> Congruent y z w x.
