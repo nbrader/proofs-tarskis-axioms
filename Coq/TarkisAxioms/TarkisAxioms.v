@@ -62,9 +62,9 @@ Proof.
   apply H.
 Qed.
 
-Axiom betweenId : forall x y, Between x y x -> x = y.
-Axiom betweenPasch : forall u v x y z, (Between u v x /\ Between y z x) -> exists a, Between u a z /\ Between v a y.
-Axiom betweenContinuity : forall phi psi : Point -> Prop,
+Axiom betweennessId : forall x y, Between x y x -> x = y.
+Axiom betweennessPasch : forall u v x y z, (Between u v x /\ Between y z x) -> exists a, Between u a z /\ Between v a y.
+Axiom betweennessContinuity : forall phi psi : Point -> Prop,
                           (exists a,
                           forall x y,
                           ((phi x /\ psi y) -> Between a x y)) ->
@@ -89,7 +89,7 @@ Proof.
   - 
 Admitted.
 
-Theorem betweenRefl : forall x y, Between x x y.
+Theorem betweennessRefl : forall x y, Between x x y.
 Proof.
   intros.
 
@@ -110,27 +110,27 @@ Proof.
   - apply congruenceIdRev.
 Qed.
 
-Theorem betweenIdentity : forall x y, Between x y x <-> x = y.
+Theorem betweennessIdentity : forall x y, Between x y x <-> x = y.
 Proof.
   intros.
   split.
-  - apply betweenId.
+  - apply betweennessId.
   - intros.
     rewrite H.
-    apply betweenRefl.
+    apply betweennessRefl.
 Qed.
 
-Theorem betweenSym : forall x y z, Between x y z -> Between z y x.
+Theorem betweennessSym : forall x y z, Between x y z -> Between z y x.
 Proof.
 
 Admitted.
 
-Theorem betweenTrans : forall w x y z, (Between x y w /\ Between y z w) -> Between x y z.
+Theorem betweennessTrans : forall w x y z, (Between x y w /\ Between y z w) -> Between x y z.
 Proof.
   
 Admitted.
 
-Theorem betweenConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z /\ Between x z y).
+Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z /\ Between x z y).
 Proof.
   
 Admitted.
