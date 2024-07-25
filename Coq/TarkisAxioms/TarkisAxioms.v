@@ -34,3 +34,30 @@ Proof.
   - apply H.
   - apply H0.
 Qed.
+
+Theorem congruenceOrderIrrelevance1 : forall w x y z : Point, Congruent w x y z -> Congruent w x z y.
+Proof.
+  intros.
+  apply congruenceTrans with (u := y) (v := z) (w := w) (x := x) (y := z) (z := y).
+  split.
+  - apply congruenceBinSym.
+    apply H.
+  - apply congruenceSym.
+Qed.
+
+Theorem congruenceOrderIrrelevance2 : forall w x y z : Point, Congruent w x y z -> Congruent x w y z.
+Proof.
+  intros.
+  apply congruenceTrans with (u := w) (v := x) (w := x) (x := w) (y := y) (z := z).
+  split.
+  - apply congruenceSym.
+  - apply H.
+Qed.
+
+Theorem congruenceOrderIrrelevance3 : forall w x y z : Point, Congruent w x y z -> Congruent x w z y.
+Proof.
+  intros.
+  apply congruenceOrderIrrelevance1.
+  apply congruenceOrderIrrelevance2.
+  apply H.
+Qed.
