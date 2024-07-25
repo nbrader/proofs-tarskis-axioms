@@ -77,3 +77,45 @@ Axiom upperDim : forall u v x y z, Congruent x y x v /\ Congruent y u y v /\ Con
 Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
 Axiom fiveSegment : forall x y z x' y' z' u u', (x <> y /\ Between x y z /\ Between x' y' z' /\ Congruent x y x' y' /\ Congruent y z y' z' /\ Congruent x u x' u' /\ Congruent y u y' u') -> Congruent z u z' u'.
 Axiom segmentConstr : forall x y a b, exists z, Between x y z /\ Congruent y z a b.
+
+Theorem congruenceZero : forall x y, Congruent x x y y.
+Proof.
+  intros.
+  assert (Congruent x x x x) by apply congruenceBinRefl.
+  assert (Congruent y y y y) by apply congruenceBinRefl.
+  assert (Congruent x y x y) by apply congruenceBinRefl.
+  apply congruenceTrans with (u := x) (v := y) (w := x) (x := x) (y := y) (z := y).
+  split.
+  - 
+Admitted.
+
+Theorem betweenRefl : forall x y, Between x x y.
+Proof.
+  intros.
+
+Admitted.
+
+Theorem congruenceIdRev : forall x y z, x = y -> Congruent x y z z.
+Proof.
+  intros.
+  rewrite H.
+  apply congruenceZero.
+Qed.
+
+Theorem CongruenceIdentity : forall x y z, Congruent x y z z <-> x = y.
+Proof.
+  intros.
+  split.
+  - apply congruenceId.
+  - apply congruenceIdRev.
+Qed.
+
+Theorem BetweenIdentity : forall x y, Between x y x <-> x = y.
+Proof.
+  intros.
+  split.
+  - apply betweenId.
+  - intros.
+    rewrite H.
+    apply betweenRefl.
+Qed.
