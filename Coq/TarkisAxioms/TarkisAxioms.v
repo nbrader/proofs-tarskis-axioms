@@ -102,7 +102,7 @@ Proof.
   apply congruenceZero.
 Qed.
 
-Theorem CongruenceIdentity : forall x y z, Congruent x y z z <-> x = y.
+Theorem congruenceIdentity : forall x y z, Congruent x y z z <-> x = y.
 Proof.
   intros.
   split.
@@ -110,7 +110,7 @@ Proof.
   - apply congruenceIdRev.
 Qed.
 
-Theorem BetweenIdentity : forall x y, Between x y x <-> x = y.
+Theorem betweenIdentity : forall x y, Between x y x <-> x = y.
 Proof.
   intros.
   split.
@@ -119,3 +119,18 @@ Proof.
     rewrite H.
     apply betweenRefl.
 Qed.
+
+Theorem betweenSym : forall x y z, Between x y z -> Between z y x.
+Proof.
+
+Admitted.
+
+Theorem betweenTrans : forall w x y z, (Between x y w /\ Between y z w) -> Between x y z.
+Proof.
+  
+Admitted.
+
+Theorem betweenConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z /\ Between x z y).
+Proof.
+  
+Admitted.
