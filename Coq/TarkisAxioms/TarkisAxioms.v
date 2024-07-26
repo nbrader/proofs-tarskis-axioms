@@ -123,7 +123,7 @@ Qed.
 Theorem congruenceZero : forall x y, Congruent x x y y.
 Proof.
   intros.
-  
+
 Admitted.
 
 Theorem betweennessRefl : forall x y, Between x x y.
@@ -168,6 +168,16 @@ Proof.
 Admitted.
 
 Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z /\ Between x z y).
+Proof.
+  
+Admitted.
+
+Theorem euclid2 : forall u v w x y z, ((Between x y w /\ Congruent x y y w) /\ (Between x u v /\ Congruent x u u v) /\ (Between y u z /\ Congruent y u u z)) -> Congruent y z v w.
+Proof.
+  
+Admitted.
+
+Theorem euclid3 : forall x y z, Between x y z \/ Between x y z \/ Between x y z \/ (exists a b : Point, (Congruent x a y a /\ Congruent x a z a)).
 Proof.
   
 Admitted.
