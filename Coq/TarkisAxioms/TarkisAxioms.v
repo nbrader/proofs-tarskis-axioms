@@ -1,4 +1,4 @@
-(* Require Import Classical. *)
+Require Import Classical.
 
 Parameter Point : Type.
 Parameter Congruent : Point -> Point -> Point -> Point -> Prop.
@@ -106,13 +106,76 @@ Proof.
   - apply congruenceIdRev.
 Qed.
 
+Lemma segConstr1 : Prop.
+Proof.
+  (* Axiom segmentConstr : forall x y a b, exists z, Between x y z /\ Congruent y z a b. *)
+Admitted.
+
+(* Between x y z /\ Congruent y z a b
+~~(Between x y z /\ Congruent y z a b)
+~(~Between x y z \/ ~Congruent y z a b)
+
+~(Between x y z -> ~Congruent y z a b)
+(Between x y z -> ~Congruent y z a b) -> False
+
+
+~(Congruent y z a b -> ~Between x y z)
+(Congruent y z a b -> ~Between x y z) -> False *)
+
+Theorem betweennessRefl : forall x y, Between x x y.
+Proof.
+  intros.
+  (* assert (Between x y x \/ Between y x x \/ Between x x y).
+  - assert (exists z : Point, Congruent x y x z /\ Congruent y x y z /\ Congruent x x x z /\ x <> z -> Between x y x \/ Between y x x \/ Between x x y).
+      + 
+      apply upperDim.
+      assert (x = y \/ x <> y) by apply classic.
+      destruct H0.
+      + rewrite H0.
+        left.
+        assert (exists z, Between y y z /\ Congruent y z y y) by apply segmentConstr.
+        destruct H1.
+        destruct H1.
+        apply congruenceId in H2 as H3.
+        rewrite <- H3 in H1.
+        apply H1.
+      + apply H.
+        split.
+        * apply congruenceBinRefl.
+        * split.
+          -- 
+
+      
+    + exists x in H.
+      destruct H.
+      apply H.
+
+  destruct H.
+  destruct H.
+  apply congruenceId in H0 as H1.
+  rewrite <- H1 in H.
+  apply betweennessSym in H.
+  apply H. *)
+Admitted.
+
 Theorem betweennessSym : forall x y z, Between x y z -> Between z y x.
 Proof.
   intros.
+  assert (exists x, Between z y x /\ Congruent y x z z) by apply segmentConstr.
+  destruct H0.
+  destruct H0.
+  
+  - assert (Between z y x \/ ~Between z y x) by apply classic.
+    intro.
+    destruct H0.
+    + apply H0.
+    + contradiction.
+  - apply H0.
+    intro.
   
 Admitted.
 
-Theorem betweennessRefl : forall x y, Between x x y.
+Theorem betweennessRefl2 : forall x y, Between x x y.
 Proof.
   intros.
   assert (exists z, Between y x z /\ Congruent x z y y) by apply segmentConstr.
