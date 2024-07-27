@@ -141,7 +141,7 @@ Proof.
     + apply betweennessRefl1.
     + apply H.
   - destruct H0.
-    apply betweennessId in H0.
+    apply betweennessIdentity in H0.
     rewrite <- H0 in H1.
     apply H1.
 Qed.
@@ -153,13 +153,23 @@ Proof.
   apply betweennessRefl1.
 Qed.
 
-Print Assumptions betweennessSym.
-Print Assumptions betweennessRefl2.
-
 Theorem betweennessTrans : forall w x y z, (Between x y w /\ Between y z w) -> Between x y z.
 Proof.
-  
-Admitted.
+  intros w x y z H.
+  specialize betweennessPasch with (u := x) (v := y) (x := w) (y := y) (z := z).
+  intros.
+  apply H0 in H.
+  clear H0.
+  destruct H.
+  destruct H.
+  apply betweennessIdentity in H0.
+  rewrite <- H0 in H.
+  apply H.
+Qed.
+
+Print Assumptions betweennessSym.
+Print Assumptions betweennessRefl2.
+Print Assumptions betweennessTrans.
 
 Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z /\ Between x z y).
 Proof.
