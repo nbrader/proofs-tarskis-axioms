@@ -1,4 +1,4 @@
-(* Require Import Classical. *)
+Require Import Classical.
 
 Parameter Point : Type.
 Parameter Congruent : Point -> Point -> Point -> Point -> Prop.
@@ -171,9 +171,28 @@ Print Assumptions betweennessSym.
 Print Assumptions betweennessRefl2.
 Print Assumptions betweennessTrans.
 
-Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z /\ Between x z y).
+Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
 Proof.
+  intros w x y z H.
+  specialize betweennessPasch with (u := x) (v := y) (x := w) (y := x) (z := z).
+  intros.
+  apply H0 in H as Hx.
+  clear H0.
+  destruct Hx.
+  destruct H0.
+  apply betweennessSym in H1.
+  destruct H.
 
+  assert (x = w \/ x <> w) by apply classic.
+  destruct H3.
+  - rewrite <- H3 in *.
+    apply betweennessIdentity in H, H2.
+    rewrite <- H.
+    rewrite <- H2.
+    left.
+    apply betweennessIdentity.
+    reflexivity.
+  - 
 Admitted.
 
 Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
