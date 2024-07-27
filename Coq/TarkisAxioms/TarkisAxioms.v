@@ -91,12 +91,6 @@ Proof.
   apply H0.
 Qed.
 
-Theorem betweennessRefl : forall x y, Between x x y.
-Proof.
-  intros.
-  
-Admitted.
-
 Theorem congruenceIdRev : forall x y z, x = y -> Congruent x y z z.
 Proof.
   intros.
@@ -112,6 +106,24 @@ Proof.
   - apply congruenceIdRev.
 Qed.
 
+Theorem betweennessSym : forall x y z, Between x y z -> Between z y x.
+Proof.
+  intros.
+  
+Admitted.
+
+Theorem betweennessRefl : forall x y, Between x x y.
+Proof.
+  intros.
+  assert (exists z, Between y x z /\ Congruent x z y y) by apply segmentConstr.
+  destruct H.
+  destruct H.
+  apply congruenceId in H0 as H1.
+  rewrite <- H1 in H.
+  apply betweennessSym in H.
+  apply H.
+Qed.
+
 Theorem betweennessIdentity : forall x y, Between x y x <-> x = y.
 Proof.
   intros.
@@ -121,11 +133,6 @@ Proof.
     rewrite H.
     apply betweennessRefl.
 Qed.
-
-Theorem betweennessSym : forall x y z, Between x y z -> Between z y x.
-Proof.
-
-Admitted.
 
 Theorem betweennessTrans : forall w x y z, (Between x y w /\ Between y z w) -> Between x y z.
 Proof.
