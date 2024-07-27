@@ -1,17 +1,12 @@
-(* Import classical logic to handle some of the axioms and reasoning *)
 (* Require Import Classical. *)
 
-(* Declare types and parameters *)
 Parameter Point : Type.
 Parameter Congruent : Point -> Point -> Point -> Point -> Prop.
 Parameter Between : Point -> Point -> Point -> Prop.
 
-(* Declare axioms related to congruence *)
 Axiom congruenceSym : forall x y, Congruent x y y x.
-Axiom congruenceId : forall x y z, Congruent x y z z -> x = y.
 Axiom congruenceTrans : forall u v w x y z, (Congruent u v w x /\ Congruent u v y z) -> Congruent w x y z.
 
-(* Prove basic properties of congruence *)
 Theorem congruenceBinRefl : forall x y, Congruent x y x y.
 Proof.
   intros.
@@ -68,22 +63,14 @@ Proof.
   apply H.
 Qed.
 
-(* Declare axioms related to betweenness *)
-Axiom betweennessId : forall x y, Between x y x -> x = y.
-Axiom betweennessPasch : forall u v x y z, (Between u v x /\ Between y z x) -> exists a, Between u a z /\ Between v a y.
-Axiom betweennessContinuity : forall phi psi : Point -> Prop,
-                          (exists a,
-                          forall x y,
-                          ((phi x /\ psi y) -> Between a x y)) ->
-                          (exists b,
-                          forall x y,
-                          ((phi x /\ psi y) -> Between x b y)).
+Print Assumptions congruenceBinRefl.
+Print Assumptions congruenceBinSym.
+Print Assumptions congruenceBinTrans.
+Print Assumptions congruenceOrderIrrelevance1.
+Print Assumptions congruenceOrderIrrelevance2.
+Print Assumptions congruenceOrderIrrelevance3.
 
-(* Declare higher dimensionality axioms *)
-Axiom lowerDim : exists a b c, ~Between a b c /\ ~Between b c a /\ ~Between c a b.
-Axiom upperDim : forall u v x y z, Congruent x y x v /\ Congruent y u y v /\ Congruent z u z v /\ u <> v -> Between x y z \/ Between y z x \/ Between z x y.
-Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
-Axiom fiveSegment : forall x y z x' y' z' u u', (x <> y /\ Between x y z /\ Between x' y' z' /\ Congruent x y x' y' /\ Congruent y z y' z' /\ Congruent x u x' u' /\ Congruent y u y' u') -> Congruent z u z' u'.
+Axiom congruenceId : forall x y z, Congruent x y z z -> x = y.
 Axiom segmentConstr : forall x y a b, exists z, Between x y z /\ Congruent y z a b.
 
 (* Prove a basic property related to congruence *)
@@ -127,6 +114,27 @@ Proof.
   apply H.
 Qed.
 
+Print Assumptions congruenceZero.
+Print Assumptions congruenceIdRev.
+Print Assumptions congruenceIdentity.
+Print Assumptions betweennessRefl1.
+
+Axiom betweennessId : forall x y, Between x y x -> x = y.
+
+Theorem betweennessIdentity : forall x y, Between x y x <-> x = y.
+Proof.
+  intros.
+  split.
+  - apply betweennessId.
+  - intros.
+    rewrite H.
+    apply betweennessRefl1.
+Qed.
+
+Print Assumptions betweennessIdentity.
+
+Axiom betweennessPasch : forall u v x y z, (Between u v x /\ Between y z x) -> exists a, Between u a z /\ Between v a y.
+
 (* Prove betweenness symmetry *)
 Theorem betweennessSym : forall x y z, Between x y z -> Between z y x.
 Proof.
@@ -151,15 +159,8 @@ Proof.
   apply betweennessRefl1.
 Qed.
 
-Theorem betweennessIdentity : forall x y, Between x y x <-> x = y.
-Proof.
-  intros.
-  split.
-  - apply betweennessId.
-  - intros.
-    rewrite H.
-    apply betweennessRefl1.
-Qed.
+Print Assumptions betweennessSym.
+Print Assumptions betweennessRefl2.
 
 Theorem betweennessTrans : forall w x y z, (Between x y w /\ Between y z w) -> Between x y z.
 Proof.
@@ -171,6 +172,8 @@ Proof.
   
 Admitted.
 
+Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
+
 Theorem euclid2 : forall u v w x y z, ((Between x y w /\ Congruent x y y w) /\ (Between x u v /\ Congruent x u u v) /\ (Between y u z /\ Congruent y u u z)) -> Congruent y z v w.
 Proof.
   
@@ -180,3 +183,16 @@ Theorem euclid3 : forall x y z, Between x y z \/ Between x y z \/ Between x y z 
 Proof.
   
 Admitted.
+
+Axiom betweennessContinuity : forall phi psi : Point -> Prop,
+                          (exists a,
+                          forall x y,
+                          ((phi x /\ psi y) -> Between a x y)) ->
+                          (exists b,
+                          forall x y,
+                          ((phi x /\ psi y) -> Between x b y)).
+
+(* Declare higher dimensionality axioms *)
+Axiom lowerDim : exists a b c, ~Between a b c /\ ~Between b c a /\ ~Between c a b.
+Axiom upperDim : forall u v x y z, Congruent x y x v /\ Congruent y u y v /\ Congruent z u z v /\ u <> v -> Between x y z \/ Between y z x \/ Between z x y.
+Axiom fiveSegment : forall x y z x' y' z' u u', (x <> y /\ Between x y z /\ Between x' y' z' /\ Congruent x y x' y' /\ Congruent y z y' z' /\ Congruent x u x' u' /\ Congruent y u y' u') -> Congruent z u z' u'.
