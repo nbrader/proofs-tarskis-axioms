@@ -1,4 +1,4 @@
-Require Import Classical.
+(* Require Import Classical. *)
 
 Parameter Point : Type.
 Parameter Congruent : Point -> Point -> Point -> Point -> Prop.
@@ -80,56 +80,21 @@ Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> e
 Axiom fiveSegment : forall x y z x' y' z' u u', (x <> y /\ Between x y z /\ Between x' y' z' /\ Congruent x y x' y' /\ Congruent y z y' z' /\ Congruent x u x' u' /\ Congruent y u y' u') -> Congruent z u z' u'.
 Axiom segmentConstr : forall x y a b, exists z, Between x y z /\ Congruent y z a b.
 
-Theorem congruenceZero' : forall w x y z, ~(Congruent w x y z /\ (w <> x \/ y <> z) /\ (w = x \/ y = z)).
-Proof.
-  intros.
-  intro.
-  destruct H.
-  destruct H0.
-  destruct H1.
-  - destruct H0.
-    + contradiction.
-    + rewrite H1 in H.
-      apply congruenceBinSym in H.
-      apply congruenceId in H.
-      contradiction.
-  - destruct H0.
-    + rewrite H1 in H.
-      apply congruenceId in H.
-      contradiction.
-    + contradiction.
-Qed.
-
-Theorem congruenceZero'': forall w x y z, (w <> x \/ y <> z) /\ (w = x \/ y = z) -> ~Congruent w x y z.
-Proof.
-  intros.
-  destruct H.
-  destruct H0.
-  - destruct H.
-    + contradiction.
-    + rewrite H0.
-      intro.
-      apply congruenceBinSym in H1.
-      apply congruenceId in H1.
-      contradiction.
-  - destruct H.
-    + rewrite H0.
-      intro.
-      apply congruenceId in H1.
-      contradiction.
-    + contradiction.
-Qed.
-
 Theorem congruenceZero : forall x y, Congruent x x y y.
 Proof.
   intros.
-
-Admitted.
+  assert (exists z, Between y x z /\ Congruent x z y y) by apply segmentConstr.
+  destruct H.
+  destruct H.
+  apply congruenceId in H0 as H1.
+  rewrite <- H1 in H0.
+  apply H0.
+Qed.
 
 Theorem betweennessRefl : forall x y, Between x x y.
 Proof.
   intros.
-
+  
 Admitted.
 
 Theorem congruenceIdRev : forall x y z, x = y -> Congruent x y z z.
