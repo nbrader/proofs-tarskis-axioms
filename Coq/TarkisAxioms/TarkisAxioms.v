@@ -73,7 +73,6 @@ Print Assumptions congruenceOrderIrrelevance3.
 Axiom congruenceId : forall x y z, Congruent x y z z -> x = y.
 Axiom segmentConstr : forall x y a b, exists z, Between x y z /\ Congruent y z a b.
 
-(* Prove a basic property related to congruence *)
 Theorem congruenceZero : forall x y, Congruent x x y y.
 Proof.
   intros.
@@ -85,7 +84,6 @@ Proof.
   apply H0.
 Qed.
 
-(* Prove a reverse congruence identity *)
 Theorem congruenceIdRev : forall x y z, x = y -> Congruent x y z z.
 Proof.
   intros.
@@ -93,7 +91,6 @@ Proof.
   apply congruenceZero.
 Qed.
 
-(* Prove an identity property of congruence *)
 Theorem congruenceIdentity : forall x y z, Congruent x y z z <-> x = y.
 Proof.
   intros.
@@ -102,7 +99,6 @@ Proof.
   - apply congruenceIdRev.
 Qed.
 
-(* Prove a basic property of betweenness *)
 Theorem betweennessRefl1 : forall x y, Between y x x.
 Proof.
   intros.
@@ -135,11 +131,9 @@ Print Assumptions betweennessIdentity.
 
 Axiom betweennessPasch : forall u v x y z, (Between u v x /\ Between y z x) -> exists a, Between u a z /\ Between v a y.
 
-(* Prove betweenness symmetry *)
 Theorem betweennessSym : forall x y z, Between x y z -> Between z y x.
 Proof.
   intros x y z H.
-  (* Use Pasch's axiom with appropriate points to reverse the betweenness *)
   specialize betweennessPasch with (u := y) (v := z) (x := z) (y := x) (z := y).
   intros.
   destruct H0.
@@ -169,7 +163,7 @@ Admitted.
 
 Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z /\ Between x z y).
 Proof.
-  
+
 Admitted.
 
 Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
@@ -192,7 +186,6 @@ Axiom betweennessContinuity : forall phi psi : Point -> Prop,
                           forall x y,
                           ((phi x /\ psi y) -> Between x b y)).
 
-(* Declare higher dimensionality axioms *)
 Axiom lowerDim : exists a b c, ~Between a b c /\ ~Between b c a /\ ~Between c a b.
 Axiom upperDim : forall u v x y z, Congruent x y x v /\ Congruent y u y v /\ Congruent z u z v /\ u <> v -> Between x y z \/ Between y z x \/ Between z x y.
 Axiom fiveSegment : forall x y z x' y' z' u u', (x <> y /\ Between x y z /\ Between x' y' z' /\ Congruent x y x' y' /\ Congruent y z y' z' /\ Congruent x u x' u' /\ Congruent y u y' u') -> Congruent z u z' u'.
