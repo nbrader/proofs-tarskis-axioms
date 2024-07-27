@@ -160,7 +160,7 @@ Admitted.
 
 Theorem betweennessSym : forall x y z, Between x y z -> Between z y x.
 Proof.
-  intros.
+  (* intros.
   assert (exists x, Between z y x /\ Congruent y x z z) by apply segmentConstr.
   destruct H0.
   destruct H0.
@@ -171,7 +171,7 @@ Proof.
     + apply H0.
     + contradiction.
   - apply H0.
-    intro.
+    intro. *)
   
 Admitted.
 
