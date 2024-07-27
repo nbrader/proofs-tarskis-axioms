@@ -1,5 +1,5 @@
 (* Import classical logic to handle some of the axioms and reasoning *)
-Require Import Classical.
+(* Require Import Classical. *)
 
 (* Declare types and parameters *)
 Parameter Point : Type.
