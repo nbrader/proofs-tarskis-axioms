@@ -179,7 +179,7 @@ Axiom betweennessContinuity : forall phi psi : Point -> Prop,
                           forall x y,
                           ((phi x /\ psi y) -> Between x b y)).
 
-Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
+(* Theorem betweennessConn1 : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
 Proof.
   intros w x y z H.
   specialize betweennessPasch with (u := x) (v := y) (x := w) (y := x) (z := z).
@@ -210,9 +210,68 @@ Proof.
       rewrite <- H4.
       rewrite <- H5.
       apply H.
-    + 
+    + assert (forall x y0, y = x /\ w = y0 -> Between x x1 y0).
+      * intros.
+        destruct H5.
+        apply betweennessIdentity in H5, H6.
+        apply H4.
+        split.
+        -- apply H5.
+        -- apply H6.
+      * right.
+        apply H5 with (x := x) (y0 := z).
 
+Admitted.
 
+Theorem betweennessConn2 : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
+Proof.
+  intros w x y z H.
+  assert (Between x y z \/ ~Between x y z) by apply classic.
+  destruct H0.
+  - left.
+    apply H0.
+  - right.
+
+  specialize betweennessTrans with (u := x) (v := y) (x := w) (y := x) (z := z).
+
+Admitted. *)
+
+Parameter P Q : Point -> Prop.
+
+Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
+Proof.
+  intros w x y z H.
+  destruct H.
+  assert (Between y z w \/ ~Between y z w) by apply classic.
+  destruct H1.
+  - left.
+    apply betweennessTrans with (w := w) (x := x) (y := y) (z := z).
+    split.
+    + apply H.
+    + apply H1.
+  - right.
+    apply betweennessTrans with (w := w) (x := x) (y := z) (z := y).
+    split.
+    + apply H0.
+    + specialize betweennessContinuity with (fun x => P x) (fun x => Q x).
+      intros.
+      destruct H2.
+      * exists x.
+        intros.
+        destruct H2.
+        assert (P x0 /\ Q y0 -> Between x x0 y0).
+        -- admit.
+        -- apply H4.
+           split.
+           ++ apply H2.
+           ++ apply H3.
+      * assert (x0 = y).
+        -- admit.
+        -- rewrite H3 in H2.
+          apply H2.
+          split.
+          ++ admit.
+          ++ admit.
 Admitted.
 
 Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
