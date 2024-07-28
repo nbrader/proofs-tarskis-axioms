@@ -259,14 +259,22 @@ Proof.
       * exists x.
         intros.
         destruct H2.
-        assert (P x0 /\ Q y0 -> Between x x0 y0).
-        -- admit.
+        assert (Between x x0 y0).
+        -- intros.
+           assert ((x0 = y \/ x0 = z) /\ y0 = w).
+           ++ admit.
+           ++ destruct H4.
+              destruct H4.
+              ** rewrite H4.
+                 rewrite H5.
+                 apply H.
+              ** rewrite H4.
+                 rewrite H5.
+                 apply H0.
         -- apply H4.
-           split.
-           ++ apply H2.
-           ++ apply H3.
       * assert (x0 = y).
-        -- admit.
+        -- apply betweennessIdentity.
+           admit.
         -- rewrite H3 in H2.
           apply H2.
           split.
