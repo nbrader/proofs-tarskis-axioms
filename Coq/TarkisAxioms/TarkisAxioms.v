@@ -171,6 +171,14 @@ Print Assumptions betweennessSym.
 Print Assumptions betweennessRefl2.
 Print Assumptions betweennessTrans.
 
+Axiom betweennessContinuity : forall phi psi : Point -> Prop,
+                          (exists a,
+                          forall x y,
+                          ((phi x /\ psi y) -> Between a x y)) ->
+                          (exists b,
+                          forall x y,
+                          ((phi x /\ psi y) -> Between x b y)).
+
 Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
 Proof.
   intros w x y z H.
@@ -192,7 +200,19 @@ Proof.
     left.
     apply betweennessIdentity.
     reflexivity.
-  - 
+  - specialize betweennessContinuity with (fun x => Between y x y) (fun x => Between w x w).
+    intros.
+    destruct H4.
+    + exists x.
+      intros.
+      destruct H4.
+      apply betweennessIdentity in H4, H5.
+      rewrite <- H4.
+      rewrite <- H5.
+      apply H.
+    + 
+
+
 Admitted.
 
 Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
@@ -206,14 +226,6 @@ Theorem euclid3 : forall x y z, Between x y z \/ Between x y z \/ Between x y z 
 Proof.
   
 Admitted.
-
-Axiom betweennessContinuity : forall phi psi : Point -> Prop,
-                          (exists a,
-                          forall x y,
-                          ((phi x /\ psi y) -> Between a x y)) ->
-                          (exists b,
-                          forall x y,
-                          ((phi x /\ psi y) -> Between x b y)).
 
 Axiom lowerDim : exists a b c, ~Between a b c /\ ~Between b c a /\ ~Between c a b.
 Axiom upperDim : forall u v x y z, Congruent x y x v /\ Congruent y u y v /\ Congruent z u z v /\ u <> v -> Between x y z \/ Between y z x \/ Between z x y.
