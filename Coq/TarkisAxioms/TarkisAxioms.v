@@ -238,6 +238,16 @@ Admitted. *)
 
 Parameter P Q : Point -> Prop.
 
+Lemma contra : forall (P Q : Prop), (P -> Q) -> (~Q -> ~P).
+Proof.
+  intros P Q H.
+  unfold not.
+  intros HnQ HP.
+  apply HnQ.
+  apply H.
+  exact HP.
+Qed.
+
 Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
 Proof.
   intros w x y z H.
