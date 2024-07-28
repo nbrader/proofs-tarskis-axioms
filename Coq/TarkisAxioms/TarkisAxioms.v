@@ -272,10 +272,13 @@ Proof.
                  rewrite H5.
                  apply H0.
         -- apply H4.
-      * assert (x0 = y).
+      * assert (y = x0).
         -- apply betweennessIdentity.
-           admit.
-        -- rewrite H3 in H2.
+           apply H2.
+           split.
+           ++ admit.
+           ++ admit.
+        -- rewrite <- H3 in H2.
           apply H2.
           split.
           ++ admit.
