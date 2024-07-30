@@ -179,121 +179,8 @@ Axiom betweennessContinuity : forall phi psi : Point -> Prop,
                           forall x y,
                           ((phi x /\ psi y) -> Between x b y)).
 
-(* Theorem betweennessConn1 : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
-Proof.
-  intros w x y z H.
-  specialize betweennessPasch with (u := x) (v := y) (x := w) (y := x) (z := z).
-  intros.
-  apply H0 in H as Hx.
-  clear H0.
-  destruct Hx.
-  destruct H0.
-  apply betweennessSym in H1.
-  destruct H.
-
-  assert (x = w \/ x <> w) by apply classic.
-  destruct H3.
-  - rewrite <- H3 in *.
-    apply betweennessIdentity in H, H2.
-    rewrite <- H.
-    rewrite <- H2.
-    left.
-    apply betweennessIdentity.
-    reflexivity.
-  - specialize betweennessContinuity with (fun x => Between y x y) (fun x => Between w x w).
-    intros.
-    destruct H4.
-    + exists x.
-      intros.
-      destruct H4.
-      apply betweennessIdentity in H4, H5.
-      rewrite <- H4.
-      rewrite <- H5.
-      apply H.
-    + assert (forall x y0, y = x /\ w = y0 -> Between x x1 y0).
-      * intros.
-        destruct H5.
-        apply betweennessIdentity in H5, H6.
-        apply H4.
-        split.
-        -- apply H5.
-        -- apply H6.
-      * right.
-        apply H5 with (x := x) (y0 := z).
-
-Admitted.
-
-Theorem betweennessConn2 : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
-Proof.
-  intros w x y z H.
-  assert (Between x y z \/ ~Between x y z) by apply classic.
-  destruct H0.
-  - left.
-    apply H0.
-  - right.
-
-  specialize betweennessTrans with (u := x) (v := y) (x := w) (y := x) (z := z).
-
-Admitted. *)
-
-Parameter P Q : Point -> Prop.
-
-Lemma contra : forall (P Q : Prop), (P -> Q) -> (~Q -> ~P).
-Proof.
-  intros P Q H.
-  unfold not.
-  intros HnQ HP.
-  apply HnQ.
-  apply H.
-  exact HP.
-Qed.
-
-Theorem betweennessConn : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
-Proof.
-  intros w x y z H.
-  destruct H.
-  assert (Between y z w \/ ~Between y z w) by apply classic.
-  destruct H1.
-  - left.
-    apply betweennessTrans with (w := w) (x := x) (y := y) (z := z).
-    split.
-    + apply H.
-    + apply H1.
-  - right.
-    apply betweennessTrans with (w := w) (x := x) (y := z) (z := y).
-    split.
-    + apply H0.
-    + specialize betweennessContinuity with (fun x => P x) (fun x => Q x).
-      intros.
-      destruct H2.
-      * exists x.
-        intros.
-        destruct H2.
-        assert (Between x x0 y0).
-        -- intros.
-           assert ((x0 = y \/ x0 = z) /\ y0 = w).
-           ++ admit.
-           ++ destruct H4.
-              destruct H4.
-              ** rewrite H4.
-                 rewrite H5.
-                 apply H.
-              ** rewrite H4.
-                 rewrite H5.
-                 apply H0.
-        -- apply H4.
-      * assert (y = x0).
-        -- apply betweennessIdentity.
-           apply H2.
-           split.
-           ++ admit.
-           ++ admit.
-        -- rewrite <- H3 in H2.
-          apply H2.
-          split.
-          ++ admit.
-          ++ admit.
-Admitted.
+(* Apparently a theorem of above axioms but seemingly not a simple one so I'm making it an assumption. *)
+Axiom betweennessConn_THEOREM : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
 
 Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
 
@@ -307,6 +194,5 @@ Proof.
   
 Admitted.
 
-Axiom lowerDim : exists a b c, ~Between a b c /\ ~Between b c a /\ ~Between c a b.
 Axiom upperDim : forall u v x y z, Congruent x y x v /\ Congruent y u y v /\ Congruent z u z v /\ u <> v -> Between x y z \/ Between y z x \/ Between z x y.
 Axiom fiveSegment : forall x y z x' y' z' u u', (x <> y /\ Between x y z /\ Between x' y' z' /\ Congruent x y x' y' /\ Congruent y z y' z' /\ Congruent x u x' u' /\ Congruent y u y' u') -> Congruent z u z' u'.
