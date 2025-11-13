@@ -972,3 +972,233 @@ Print Assumptions congruenceZeroRight.
 Print Assumptions congruenceZeroSame.
 Print Assumptions distinctFromCongruence.
 Print Assumptions distinctFromCongruenceSym.
+
+(* Target 21: Combined betweenness and congruence properties *)
+Theorem betweennessWithCongruenceZero : forall a b c,
+  Between a b c ->
+  Congruent b c b b ->
+  b = c.
+Proof.
+  intros.
+  apply congruenceId with (z := b).
+  apply H0.
+Qed.
+
+Theorem betweennessPreservesDist : forall a b c,
+  Between a b c ->
+  a <> b ->
+  b <> c ->
+  a <> c.
+Proof.
+  intros.
+  apply distinctFromBetween2 with (b := b).
+  - apply H.
+  - apply H0.
+Qed.
+
+(* Target 22: Congruence composition lemmas *)
+Theorem congruenceBothSidesSwap : forall a b c d,
+  Congruent a b c d <-> Congruent d c b a.
+Proof.
+  intros.
+  split.
+  - intros.
+    apply congruenceBinSym.
+    apply congruenceFlipBoth.
+    apply H.
+  - intros.
+    apply congruenceFlipBoth.
+    apply congruenceBinSym.
+    apply H.
+Qed.
+
+Theorem congruenceTripleSymmetry : forall a b c d,
+  Congruent a b c d -> Congruent c d b a.
+Proof.
+  intros.
+  apply congruenceOrderIrrelevance1.
+  apply congruenceBinSym.
+  apply H.
+Qed.
+
+(* Target 23: Betweenness order variations *)
+Theorem betweennessPreservesRefl : forall a b,
+  Between a b a -> a = b.
+Proof.
+  intros.
+  apply betweennessIdentity.
+  apply H.
+Qed.
+
+Theorem betweennessDoubleRefl : forall a b c,
+  Between a a c ->
+  Between a b a ->
+  a = b /\ a = c.
+Proof.
+  intros.
+  split.
+  - apply betweennessIdentity. apply H0.
+  - apply betweennessEndpointsEq. apply H.
+Qed.
+
+(* Target 24: Segment construction variants *)
+Theorem segmentConstrFromBetween : forall x y z,
+  Between x y z ->
+  exists w, Congruent y z y w /\ Between x y w.
+Proof.
+  intros.
+  assert (exists w, Between x y w /\ Congruent y w y z) as [w [Hbet Hcong]].
+  {
+    apply segmentConstr.
+  }
+  exists w.
+  split.
+  - apply congruenceBinSym.  apply Hcong.
+  - apply Hbet.
+Qed.
+
+Theorem segmentConstrDouble : forall x y a b c d,
+  exists z w,
+    Between x y z /\ Congruent y z a b /\
+    Between x z w /\ Congruent z w c d.
+Proof.
+  intros.
+  assert (exists z, Between x y z /\ Congruent y z a b) as [z [Hz1 Hz2]].
+  {
+    apply segmentConstr.
+  }
+  assert (exists w, Between x z w /\ Congruent z w c d) as [w [Hw1 Hw2]].
+  {
+    apply segmentConstr.
+  }
+  exists z, w.
+  split. exact Hz1.
+  split. exact Hz2.
+  split. exact Hw1.
+  exact Hw2.
+Qed.
+
+(* Target 25: Distinctness lemmas *)
+Theorem distinctSymmetric : forall (a b : Point),
+  a <> b <-> b <> a.
+Proof.
+  intros.
+  split.
+  - intros. intro. symmetry in H0. contradiction.
+  - intros. intro. symmetry in H0. contradiction.
+Qed.
+
+Theorem distinctFromCongruenceTransitive : forall a b c d e f,
+  a <> b ->
+  Congruent a b c d ->
+  Congruent c d e f ->
+  e <> f.
+Proof.
+  intros.
+  apply distinctFromCongruence with (a := c) (b := d).
+  - apply distinctFromCongruence with (a := a) (b := b).
+    + exact H.
+    + exact H0.
+  - exact H1.
+Qed.
+
+(* Target 26: Congruence reflexivity and symmetry combinations *)
+Theorem congruenceReflBoth : forall a b,
+  Congruent a a b b.
+Proof.
+  intros.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceSymRefl : forall a b,
+  Congruent a b b a.
+Proof.
+  intros.
+  apply congruenceOfReflected.
+Qed.
+
+Theorem congruenceSelfCongruent : forall a b c d,
+  Congruent a b c d ->
+  Congruent a b a b.
+Proof.
+  intros.
+  apply congruenceBinRefl.
+Qed.
+
+(* Target 27: Betweenness construction lemmas *)
+Theorem betweennessExtendLeft : forall a b,
+  exists c, Between c a b.
+Proof.
+  intros.
+  assert (exists c, Between b a c) as [c Hc].
+  {
+    apply segmentExtension.
+  }
+  exists c.
+  apply betweennessSym.
+  apply Hc.
+Qed.
+
+Theorem betweennessExtendRight : forall a b,
+  exists c, Between a b c.
+Proof.
+  intros.
+  apply segmentExtension.
+Qed.
+
+Theorem betweennessExtendBothSides : forall a b,
+  exists c d, Between c a b /\ Between a b d.
+Proof.
+  intros.
+  assert (exists c, Between c a b) as [c Hc] by apply betweennessExtendLeft.
+  assert (exists d, Between a b d) as [d Hd] by apply betweennessExtendRight.
+  exists c, d.
+  split; [exact Hc | exact Hd].
+Qed.
+
+(* Target 28: Congruence with equality *)
+Theorem congruenceEqLeft : forall a b c,
+  a = b ->
+  Congruent a b c c.
+Proof.
+  intros.
+  subst.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceEqRight : forall a b c,
+  b = c ->
+  Congruent a a b c.
+Proof.
+  intros.
+  subst.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceEqBoth : forall a b,
+  a = b ->
+  Congruent a b a b.
+Proof.
+  intros.
+  apply congruenceBinRefl.
+Qed.
+
+Print Assumptions betweennessWithCongruenceZero.
+Print Assumptions betweennessPreservesDist.
+Print Assumptions congruenceBothSidesSwap.
+Print Assumptions congruenceTripleSymmetry.
+Print Assumptions betweennessPreservesRefl.
+Print Assumptions betweennessDoubleRefl.
+Print Assumptions segmentConstrFromBetween.
+Print Assumptions segmentConstrDouble.
+Print Assumptions distinctSymmetric.
+Print Assumptions distinctFromCongruenceTransitive.
+Print Assumptions congruenceReflBoth.
+Print Assumptions congruenceSymRefl.
+Print Assumptions congruenceSelfCongruent.
+Print Assumptions betweennessExtendLeft.
+Print Assumptions betweennessExtendRight.
+Print Assumptions betweennessExtendBothSides.
+Print Assumptions congruenceEqLeft.
+Print Assumptions congruenceEqRight.
+Print Assumptions congruenceEqBoth.
