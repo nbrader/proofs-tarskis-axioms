@@ -1202,3 +1202,249 @@ Print Assumptions betweennessExtendBothSides.
 Print Assumptions congruenceEqLeft.
 Print Assumptions congruenceEqRight.
 Print Assumptions congruenceEqBoth.
+
+(* Target 29: Congruence transitivity variants *)
+Theorem congruenceTrans5 : forall a b c d e f g h i j,
+  Congruent a b c d ->
+  Congruent c d e f ->
+  Congruent e f g h ->
+  Congruent g h i j ->
+  Congruent a b i j.
+Proof.
+  intros.
+  apply congruenceChain4 with (c := c) (d := d) (e := e) (f := f) (g := g) (h := h).
+  - exact H.
+  - exact H0.
+  - exact H1.
+  - exact H2.
+Qed.
+
+Theorem congruenceTransSym2 : forall a b c d e f,
+  Congruent a b c d ->
+  Congruent c d e f ->
+  Congruent e f a b.
+Proof.
+  intros.
+  apply congruenceBinSym.
+  apply congruenceTrans4 with (c := c) (d := d).
+  - exact H.
+  - exact H0.
+Qed.
+
+(* Target 30: Betweenness with congruence preservation *)
+Theorem betweennessCongruenceId : forall a b c,
+  Between a b c ->
+  Congruent a b a a ->
+  a = b.
+Proof.
+  intros.
+  apply congruenceId with (z := a).
+  apply H0.
+Qed.
+
+Theorem betweennessWithEqualSegments : forall a b c d,
+  Between a b c ->
+  Congruent a b c d ->
+  Congruent c d a a ->
+  a = b /\ c = d.
+Proof.
+  intros.
+  split.
+  - apply congruenceId with (z := a).
+    apply congruenceTrans4 with (c := c) (d := d).
+    + exact H0.
+    + exact H1.
+  - apply congruenceId with (z := a).
+    exact H1.
+Qed.
+
+(* Target 31: More betweenness reflexivity *)
+Theorem betweennessRefl123 : forall a,
+  Between a a a /\ Between a a a /\ Between a a a.
+Proof.
+  intros.
+  split. apply betweennessRefl3.
+  split. apply betweennessRefl3.
+  apply betweennessRefl3.
+Qed.
+
+Theorem betweennessReflVariant1 : forall a b,
+  Between a b b <-> True.
+Proof.
+  intros.
+  split.
+  - intros. exact I.
+  - intros. apply betweennessRefl1.
+Qed.
+
+Theorem betweennessReflVariant2 : forall a b,
+  Between b a a <-> True.
+Proof.
+  intros.
+  split.
+  - intros. exact I.
+  - intros. apply betweennessRefl1.
+Qed.
+
+(* Target 32: Congruence with betweenness combinations *)
+Theorem congruenceWithNullRight : forall a b,
+  Congruent a b a b.
+Proof.
+  intros.
+  apply congruenceBinRefl.
+Qed.
+
+Theorem congruenceWithNullLeft : forall a b,
+  Congruent a a b b.
+Proof.
+  intros.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceNullTransitive : forall a b c,
+  Congruent a a b b ->
+  Congruent b b c c ->
+  Congruent a a c c.
+Proof.
+  intros.
+  apply congruenceZero.
+Qed.
+
+(* Target 33: Distinctness with betweenness *)
+Theorem distinctFromBetweenMiddle : forall a b c,
+  Between a b c ->
+  a <> c ->
+  (a <> b \/ b <> c).
+Proof.
+  intros a b c Hbet Hneq.
+  destruct (classic (a = b)) as [Heq | Hneq1].
+  - right.
+    subst.
+    intro Heq.
+    subst.
+    contradiction.
+  - left.
+    exact Hneq1.
+Qed.
+
+Theorem distinctFromBetweenEnds : forall a b c,
+  Between a b c ->
+  a <> b ->
+  b <> c ->
+  a <> c.
+Proof.
+  intros.
+  apply betweennessStrictOrder with (b := b).
+  - exact H.
+  - exact H0.
+  - exact H1.
+Qed.
+
+(* Target 34: Segment construction with congruence *)
+Theorem segmentConstrWithCongruence : forall x y a b c d,
+  Congruent a b c d ->
+  exists z, Between x y z /\ Congruent y z a b.
+Proof.
+  intros.
+  apply segmentConstr.
+Qed.
+
+Theorem segmentConstrChain : forall x y a b c d,
+  exists z w,
+    Between x y z /\ Congruent y z a b /\
+    Between y z w /\ Congruent z w c d.
+Proof.
+  intros.
+  assert (exists z, Between x y z /\ Congruent y z a b) as [z [Hz1 Hz2]].
+  {
+    apply segmentConstr.
+  }
+  assert (exists w, Between y z w /\ Congruent z w c d) as [w [Hw1 Hw2]].
+  {
+    apply segmentConstr.
+  }
+  exists z, w.
+  split. exact Hz1.
+  split. exact Hz2.
+  split. exact Hw1.
+  exact Hw2.
+Qed.
+
+(* Target 35: Congruence symmetry chains *)
+Theorem congruenceSymChain2 : forall a b c d e f,
+  Congruent a b c d ->
+  Congruent c d e f ->
+  Congruent e f a b.
+Proof.
+  intros.
+  apply congruenceTransSym2 with (c := c) (d := d).
+  - exact H.
+  - exact H0.
+Qed.
+
+Theorem congruenceAllSymmetries : forall a b c d,
+  Congruent a b c d ->
+  Congruent a b c d /\ Congruent b a c d /\ Congruent a b d c /\ Congruent b a d c /\
+  Congruent c d a b /\ Congruent d c a b /\ Congruent c d b a /\ Congruent d c b a.
+Proof.
+  intros.
+  split. exact H.
+  split. apply congruenceFlipLeft. exact H.
+  split. apply congruenceFlipRight. exact H.
+  split. apply congruenceFlipBoth. exact H.
+  split. apply congruenceBinSym. exact H.
+  split. apply congruenceFlipLeft. apply congruenceBinSym. exact H.
+  split. apply congruenceFlipRight. apply congruenceBinSym. exact H.
+  apply congruenceFlipBoth. apply congruenceBinSym. exact H.
+Qed.
+
+(* Target 36: Final helper lemmas *)
+Theorem congruenceFromEqual : forall a b,
+  a = b ->
+  Congruent a b a b.
+Proof.
+  intros.
+  apply congruenceBinRefl.
+Qed.
+
+Theorem betweennessFromEqual : forall a b,
+  a = b ->
+  Between a b a /\ Between a a b /\ Between b a a.
+Proof.
+  intros.
+  subst.
+  split. apply betweennessRefl1.
+  split. apply betweennessRefl2.
+  apply betweennessRefl1.
+Qed.
+
+Theorem congruenceTransitive3Way : forall a b c d e f,
+  Congruent a b c d ->
+  Congruent a b e f ->
+  Congruent c d e f.
+Proof.
+  intros.
+  apply congruenceTrans4 with (c := a) (d := b).
+  - apply congruenceBinSym. exact H.
+  - exact H0.
+Qed.
+
+Print Assumptions congruenceTrans5.
+Print Assumptions congruenceTransSym2.
+Print Assumptions betweennessCongruenceId.
+Print Assumptions betweennessWithEqualSegments.
+Print Assumptions betweennessRefl123.
+Print Assumptions betweennessReflVariant1.
+Print Assumptions betweennessReflVariant2.
+Print Assumptions congruenceWithNullRight.
+Print Assumptions congruenceWithNullLeft.
+Print Assumptions congruenceNullTransitive.
+Print Assumptions distinctFromBetweenMiddle.
+Print Assumptions distinctFromBetweenEnds.
+Print Assumptions segmentConstrWithCongruence.
+Print Assumptions segmentConstrChain.
+Print Assumptions congruenceSymChain2.
+Print Assumptions congruenceAllSymmetries.
+Print Assumptions congruenceFromEqual.
+Print Assumptions betweennessFromEqual.
+Print Assumptions congruenceTransitive3Way.
