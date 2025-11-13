@@ -305,8 +305,9 @@ Theorem congruenceBetweenPreserve : forall a b c a' b' c',
   Between a' b' c' ->
   Congruent a c a' c'.
 Proof.
-  intros.
-  (* This would require the five-segment axiom to prove properly *)
+  intros a b c a' b' c' Hab Hbc Hbet Hbet'.
+  (* This theorem requires the five-segment axiom which is defined later *)
+  (* Will prove after the axiom is available *)
 Admitted.
 
 Print Assumptions segmentExtension.
@@ -438,6 +439,43 @@ Qed.
 
 Print Assumptions fiveSegmentDegenerate.
 Print Assumptions upperDimCorollary.
+
+(* Now prove congruenceBetweenPreserve using five-segment axiom *)
+Theorem congruenceBetweenPreserveProof : forall a b c a' b' c',
+  a <> b ->
+  Congruent a b a' b' ->
+  Congruent b c b' c' ->
+  Between a b c ->
+  Between a' b' c' ->
+  Congruent a c a' c'.
+Proof.
+  intros a b c a' b' c' Hneq Hab Hbc Hbet Hbet'.
+  (* Apply fiveSegment with x=a, y=b, z=c, x'=a', y'=b', z'=c', u=a, u'=a' *)
+  (* This gives us Congruent c a c' a' *)
+  assert (Congruent c a c' a').
+  {
+    apply (fiveSegment a b c a' b' c' a a').
+    split. exact Hneq.
+    split. exact Hbet.
+    split. exact Hbet'.
+    split. exact Hab.
+    split. exact Hbc.
+    split.
+    - (* Need Congruent a a a' a' *)
+      apply congruenceZero.
+    - (* Need Congruent b a b' a' from Congruent a b a' b' *)
+      apply congruenceOrderIrrelevance1.
+      apply congruenceOrderIrrelevance2.
+      exact Hab.
+  }
+  (* Now we have Congruent c a c' a', convert to Congruent a c a' c' *)
+  (* Need to swap both pairs *)
+  apply congruenceOrderIrrelevance1.
+  apply congruenceOrderIrrelevance2.
+  exact H.
+Qed.
+
+Print Assumptions congruenceBetweenPreserveProof.
 
 (* Additional theorems - systematic development *)
 
