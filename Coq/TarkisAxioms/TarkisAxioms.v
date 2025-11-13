@@ -329,18 +329,6 @@ Proof.
   apply congruenceZero.
 Qed.
 
-Theorem congruenceBetweenPreserve : forall a b c a' b' c',
-  Congruent a b a' b' ->
-  Congruent b c b' c' ->
-  Between a b c ->
-  Between a' b' c' ->
-  Congruent a c a' c'.
-Proof.
-  intros a b c a' b' c' Hab Hbc Hbet Hbet'.
-  (* This theorem requires the five-segment axiom which is defined later *)
-  (* The proof is completed in congruenceBetweenPreserveProof after the axiom *)
-Admitted.
-
 Print Assumptions segmentExtension.
 Print Assumptions congruencePreservesEq.
 
@@ -498,7 +486,7 @@ Qed.
 Print Assumptions congruenceBetweenPreserveProof.
 
 (* Now we can complete congruenceBetweenPreserve using congruenceBetweenPreserveProof *)
-Theorem congruenceBetweenPreserveComplete : forall a b c a' b' c',
+Theorem congruenceBetweenPreserve : forall a b c a' b' c',
   Congruent a b a' b' ->
   Congruent b c b' c' ->
   Between a b c ->
@@ -1564,11 +1552,10 @@ analysis of each one and why it remains admitted:
    - A stronger version (segmentConstrUniqueComplete) is provided but
      also remains admitted due to complexity
 
-2. congruenceBetweenPreserve (line ~332-342)
-   Status: PROVEN (via congruenceBetweenPreserveComplete at line ~512)
-   - This theorem is now fully proven after the five-segment axiom
-   - The admitted version exists due to file ordering (axiom defined later)
-   - Users should reference congruenceBetweenPreserveComplete for the proof
+2. congruenceBetweenPreserve (line ~332-520)
+   Status: PROVEN
+   - Fully established using five-segment axiom (see congruenceBetweenPreserveProof)
+   - Handles both degenerate (a = b) and non-degenerate (a <> b) cases
 
 3. euclid2 (line ~349-352)
    Status: COMPLEX - Beyond current axiom set
@@ -1624,11 +1611,10 @@ CODE IMPROVEMENTS:
 
 PROVEN THEOREMS COUNT:
 - Approximately 120+ fully proven theorems
-- 1 proven via alternate formulation (congruenceBetweenPreserveComplete)
 - 2 PROVEN UNPROVABLE via formal countermodels:
   * betweennessEndpointsEq - countermodel with degenerate betweenness
   * congruenceCancelLeft - countermodel using congruenceZero
-- 5 remain admitted due to complexity (require advanced techniques)
+- 8 remain admitted due to complexity (require advanced techniques)
 - 1 REMOVED due to malformed statement
 - 1 is partially proven (degenerate cases complete)
 
