@@ -378,3 +378,37 @@ Print Assumptions congruencePseudoRefl.
 Print Assumptions congruenceTrans4.
 Print Assumptions congruenceFourRefl.
 Print Assumptions betweennessOuterTrans.
+Print Assumptions congruenceSymAll.
+
+(* Theorems using the five-segment axiom *)
+
+Theorem fiveSegmentDegenerate : forall x y z u u',
+  x = y ->
+  Between x y z ->
+  Congruent x u x u' ->
+  Congruent y u y u' ->
+  Congruent z u z u'.
+Proof.
+  (* This theorem relates to the degenerate case of the five-segment axiom *)
+Admitted.
+
+Theorem upperDimCorollary : forall u v x y z,
+  Congruent x y x v ->
+  Congruent y u y v ->
+  Congruent z u z v ->
+  u <> v ->
+  (Between x y z \/ Between y z x \/ Between z x y).
+Proof.
+  intros u v x y z Hcong1 Hcong2 Hcong3 Hneq.
+  apply upperDim with (u := u) (v := v).
+  split.
+  - exact Hcong1.
+  - split.
+    + exact Hcong2.
+    + split.
+      * exact Hcong3.
+      * exact Hneq.
+Qed.
+
+Print Assumptions fiveSegmentDegenerate.
+Print Assumptions upperDimCorollary.
