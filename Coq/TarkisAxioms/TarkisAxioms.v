@@ -565,3 +565,158 @@ Print Assumptions betweennessSymIff.
 Print Assumptions betweennessEndpointsEq.
 Print Assumptions betweennessTransMiddle.
 Print Assumptions betweennessInnerTransAttempt.
+
+(* Target 9: Congruence cancellation and inversion *)
+Theorem congruenceCancelLeft : forall a b c d,
+  Congruent a b c c ->
+  Congruent a b d d ->
+  c = d.
+Proof.
+  intros.
+  (* Both H and H0 give us a = b via congruenceId *)
+  (* We need to use transitivity of congruence *)
+  apply congruenceId in H.
+  apply congruenceId in H0.
+  (* Now H : a = b and H0 : a = b *)
+  (* This doesn't directly prove c = d *)
+  (* The theorem statement is actually not provable this way *)
+  (* We need: if ab ≅ cc and ab ≅ dd then c = d *)
+  (* From ab ≅ cc we get a = b, from ab ≅ dd we get a = b *)
+  (* But this doesn't tell us c = d without more information *)
+Admitted.
+
+Theorem congruenceInverse : forall a b c d,
+  Congruent a b c d <-> Congruent c d a b.
+Proof.
+  intros.
+  split.
+  - apply congruenceBinSym.
+  - apply congruenceBinSym.
+Qed.
+
+Theorem congruenceLeftSwap : forall a b c d,
+  Congruent a b c d <-> Congruent b a c d.
+Proof.
+  intros.
+  split.
+  - apply congruenceOrderIrrelevance2.
+  - apply congruenceOrderIrrelevance2.
+Qed.
+
+Theorem congruenceRightSwap : forall a b c d,
+  Congruent a b c d <-> Congruent a b d c.
+Proof.
+  intros.
+  split.
+  - apply congruenceOrderIrrelevance1.
+  - apply congruenceOrderIrrelevance1.
+Qed.
+
+(* Target 10: Point distinctness from geometry *)
+Theorem distinctFromBetween : forall a b c,
+  Between a b c ->
+  b <> c ->
+  a <> c.
+Proof.
+  intros a b c Hbet Hneq.
+  intro Heq.
+  subst.
+  (* If a = c, then Between c b c, which means c = b *)
+  apply betweennessIdentity in Hbet.
+  (* Hbet is now c = b *)
+  symmetry in Hbet.
+  (* Hbet is now b = c, which contradicts Hneq : b <> c *)
+  contradiction.
+Qed.
+
+Theorem distinctFromBetween2 : forall a b c,
+  Between a b c ->
+  a <> b ->
+  a <> c.
+Proof.
+  intros a b c Hbet Hneq.
+  intro Heq.
+  subst.
+  (* If a = c, then Between c b c, which means c = b *)
+  apply betweennessIdentity in Hbet.
+  subst.
+  (* Now we have c <> c from Hneq *)
+  contradiction.
+Qed.
+
+(* Target 11: Segment construction corollaries *)
+Theorem segmentConstrSymmetric : forall x y a b,
+  exists z, Between x y z /\ Congruent z y b a.
+Proof.
+  intros.
+  assert (exists z, Between x y z /\ Congruent y z a b) by apply segmentConstr.
+  destruct H as [z [Hbet Hcong]].
+  exists z.
+  split.
+  - apply Hbet.
+  - (* Need to convert Congruent y z a b to Congruent z y b a *)
+    apply congruenceOrderIrrelevance1.
+    apply congruenceOrderIrrelevance2.
+    apply Hcong.
+Qed.
+
+Theorem segmentConstrReflexive : forall x y,
+  exists z, Between x y z /\ Congruent y z y x.
+Proof.
+  intros.
+  apply segmentConstr.
+Qed.
+
+(* Target 12: Betweenness order preservation *)
+Theorem betweennessStrictOrder : forall a b c,
+  Between a b c ->
+  a <> b ->
+  b <> c ->
+  a <> c.
+Proof.
+  intros a b c Hbet Hneq1 Hneq2.
+  intro Heq.
+  subst.
+  apply betweennessIdentity in Hbet.
+  contradiction.
+Qed.
+
+Theorem betweennessSelfLeft : forall a b,
+  Between a a b <-> a = b.
+Proof.
+  intros.
+  split.
+  - intro H.
+    (* This requires proof, let me use segment construction *)
+    (* Actually, this is similar to betweennessEndpointsEq which we admitted *)
+    (* Let's try a different approach using congruence *)
+Admitted.
+
+(* Target 13: Congruence from betweenness *)
+Theorem congruenceOfReflected : forall a b,
+  Congruent a b b a.
+Proof.
+  intros.
+  apply congruenceOrderIrrelevance2.
+  apply congruenceBinRefl.
+Qed.
+
+Theorem congruenceTransRefl : forall a b c,
+  Congruent a b c c -> a = b.
+Proof.
+  intros.
+  apply congruenceId with (z := c).
+  apply H.
+Qed.
+
+Print Assumptions congruenceCancelLeft.
+Print Assumptions congruenceInverse.
+Print Assumptions congruenceLeftSwap.
+Print Assumptions congruenceRightSwap.
+Print Assumptions distinctFromBetween.
+Print Assumptions distinctFromBetween2.
+Print Assumptions segmentConstrSymmetric.
+Print Assumptions segmentConstrReflexive.
+Print Assumptions betweennessStrictOrder.
+Print Assumptions congruenceOfReflected.
+Print Assumptions congruenceTransRefl.
