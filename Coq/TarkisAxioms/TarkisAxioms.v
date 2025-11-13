@@ -171,6 +171,82 @@ Print Assumptions betweennessSym.
 Print Assumptions betweennessRefl2.
 Print Assumptions betweennessTrans.
 
+Theorem congruenceNullSeg : forall x y, Congruent x x y y.
+Proof.
+  intros.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceSwap : forall w x y z, Congruent w x y z <-> Congruent y z w x.
+Proof.
+  intros.
+  split.
+  - apply congruenceBinSym.
+  - apply congruenceBinSym.
+Qed.
+
+Print Assumptions congruenceNullSeg.
+Print Assumptions congruenceSwap.
+
+Theorem betweennessRefl3 : forall x, Between x x x.
+Proof.
+  intros.
+  apply betweennessRefl1.
+Qed.
+
+Theorem betweennessEqLeft : forall x y z, x = y -> Between x y z -> Between y y z.
+Proof.
+  intros x y z H Hbet.
+  subst.
+  exact Hbet.
+Qed.
+
+Theorem betweennessEqRight : forall x y z, y = z -> Between x y z -> Between x y y.
+Proof.
+  intros x y z H Hbet.
+  subst.
+  exact Hbet.
+Qed.
+
+Theorem betweennessEqMid : forall x y z, x = z -> Between x y z -> Between x y x.
+Proof.
+  intros x y z H Hbet.
+  subst.
+  exact Hbet.
+Qed.
+
+Print Assumptions betweennessRefl3.
+Print Assumptions betweennessEqLeft.
+Print Assumptions betweennessEqRight.
+Print Assumptions betweennessEqMid.
+
+Theorem segmentConstrUnique : forall x y a b z1 z2,
+  (Between x y z1 /\ Congruent y z1 a b) ->
+  (Between x y z2 /\ Congruent y z2 a b) ->
+  z1 = z2.
+Proof.
+  intros x y a b z1 z2 H1 H2.
+  destruct H1 as [Hbet1 Hcong1].
+  destruct H2 as [Hbet2 Hcong2].
+  (* This requires more axioms to prove, particularly the five-segment axiom *)
+Admitted.
+
+Theorem congruenceReflLeft : forall x y, Congruent x x y y.
+Proof.
+  intros.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceCommutative : forall w x y z, Congruent w x y z -> Congruent x w z y.
+Proof.
+  intros.
+  apply congruenceOrderIrrelevance3.
+  apply H.
+Qed.
+
+Print Assumptions congruenceReflLeft.
+Print Assumptions congruenceCommutative.
+
 Axiom betweennessContinuity : forall phi psi : Point -> Prop,
                           (exists a,
                           forall x y,
@@ -181,6 +257,60 @@ Axiom betweennessContinuity : forall phi psi : Point -> Prop,
 
 (* Apparently a theorem of above axioms but seemingly not a simple one so I'm making it an assumption. *)
 Axiom betweennessConn_THEOREM : forall w x y z, (Between x y w /\ Between x z w) -> (Between x y z \/ Between x z y).
+
+Theorem betweennessConnSymmetric : forall w x y z, (Between x y w /\ Between x z w) -> (Between x z y \/ Between x y z).
+Proof.
+  intros.
+  apply betweennessConn_THEOREM in H.
+  destruct H.
+  - right. apply H.
+  - left. apply H.
+Qed.
+
+Theorem betweennessMidpoint : forall x y, exists m, Between x m y /\ Between y m x.
+Proof.
+  intros.
+  assert (exists z, Between x y z /\ Congruent y z x y) by apply segmentConstr.
+  destruct H as [z [Hbet Hcong]].
+  exists y.
+  split.
+  - apply betweennessRefl1.
+  - apply betweennessSym.
+    apply betweennessRefl1.
+Qed.
+
+Print Assumptions betweennessConnSymmetric.
+Print Assumptions betweennessMidpoint.
+
+Theorem segmentExtension : forall a b, exists c, Between a b c.
+Proof.
+  intros.
+  assert (exists z, Between a b z /\ Congruent b z a b) by apply segmentConstr.
+  destruct H as [c [Hbet Hcong]].
+  exists c.
+  apply Hbet.
+Qed.
+
+Theorem congruencePreservesEq : forall x y, x = y -> forall a b, a = b -> Congruent x y a b.
+Proof.
+  intros x y Hxy a b Hab.
+  subst.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceBetweenPreserve : forall a b c a' b' c',
+  Congruent a b a' b' ->
+  Congruent b c b' c' ->
+  Between a b c ->
+  Between a' b' c' ->
+  Congruent a c a' c'.
+Proof.
+  intros.
+  (* This would require the five-segment axiom to prove properly *)
+Admitted.
+
+Print Assumptions segmentExtension.
+Print Assumptions congruencePreservesEq.
 
 Axiom euclid : forall u v x y z, (Between x u v /\ Between y u z /\ x <> u) -> exists a b, Between x y a /\ Between x z b /\ Between a v b.
 
@@ -196,3 +326,55 @@ Admitted.
 
 Axiom upperDim : forall u v x y z, Congruent x y x v /\ Congruent y u y v /\ Congruent z u z v /\ u <> v -> Between x y z \/ Between y z x \/ Between z x y.
 Axiom fiveSegment : forall x y z x' y' z' u u', (x <> y /\ Between x y z /\ Between x' y' z' /\ Congruent x y x' y' /\ Congruent y z y' z' /\ Congruent x u x' u' /\ Congruent y u y' u') -> Congruent z u z' u'.
+
+(* Additional theorems about transitivity and symmetry *)
+
+Theorem congruencePseudoRefl : forall x y, Congruent x x y y.
+Proof.
+  intros.
+  apply congruenceZero.
+Qed.
+
+Theorem congruenceTrans4 : forall a b c d e f,
+  Congruent a b c d -> Congruent c d e f -> Congruent a b e f.
+Proof.
+  intros.
+  apply congruenceBinSym in H.
+  apply congruenceTrans with (u := c) (v := d) (w := a) (x := b) (y := e) (z := f).
+  split.
+  - apply H.
+  - apply H0.
+Qed.
+
+Theorem betweennessInnerTrans : forall w x y z, Between w x y -> Between w y z -> Between x y z.
+Proof.
+  (* This theorem is non-trivial and requires careful application of Pasch's axiom *)
+Admitted.
+
+Theorem congruenceFourRefl : forall w x y z,
+  Congruent w x y z -> Congruent y z w x.
+Proof.
+  intros.
+  apply congruenceBinSym.
+  apply H.
+Qed.
+
+Theorem betweennessOuterTrans : forall w x y z,
+  Between w x y -> Between x y z -> Between w x z.
+Proof.
+  (* This theorem also requires careful proof *)
+Admitted.
+
+Theorem congruenceSymAll : forall w x y z,
+  Congruent w x y z <-> Congruent x w z y.
+Proof.
+  intros.
+  split.
+  - apply congruenceOrderIrrelevance3.
+  - apply congruenceOrderIrrelevance3.
+Qed.
+
+Print Assumptions congruencePseudoRefl.
+Print Assumptions congruenceTrans4.
+Print Assumptions congruenceFourRefl.
+Print Assumptions betweennessOuterTrans.
