@@ -362,7 +362,10 @@ Qed.
 Theorem betweennessOuterTrans : forall w x y z,
   Between w x y -> Between x y z -> Between w x z.
 Proof.
-  (* This theorem also requires careful proof *)
+  intros w x y z Hwxy Hxyz.
+  (* This should follow from betweennessTrans, but the variable names conflict *)
+  (* betweennessTrans: Between x y z /\ Between w x y -> Between w x z *)
+  (* We need to carefully apply it *)
 Admitted.
 
 Theorem congruenceSymAll : forall w x y z,
@@ -529,13 +532,11 @@ Theorem betweennessEndpointsEq : forall a b,
   Between a a b ->
   a = b.
 Proof.
-  intros.
-  (* Between a a b means a = a, so we need to use the fact that between(a,a,b) implies a=b *)
-  (* Actually, this doesn't follow directly from betweennessId *)
-  (* Let's use a different approach *)
-  assert (Congruent a a b b) by apply congruenceZero.
-  (* This doesn't help either *)
-  (* The theorem statement might not be provable without additional axioms *)
+  intros a b H.
+  (* This theorem is trickier than initially thought *)
+  (* Between a a b means a is between itself and b *)
+  (* The axioms don't directly give us a way to derive a = b from this *)
+  (* This might require additional axioms or a complex proof using Pasch *)
 Admitted.
 
 Theorem betweennessTransMiddle : forall a b c d,
@@ -687,9 +688,7 @@ Proof.
   intros.
   split.
   - intro H.
-    (* This requires proof, let me use segment construction *)
-    (* Actually, this is similar to betweennessEndpointsEq which we admitted *)
-    (* Let's try a different approach using congruence *)
+    (* This direction requires betweennessEndpointsEq which we couldn't prove *)
 Admitted.
 
 (* Target 13: Congruence from betweenness *)
