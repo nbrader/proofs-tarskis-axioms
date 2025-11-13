@@ -728,21 +728,10 @@ Proof.
   - apply H0.
 Qed.
 
-(* Target 8: Complex betweenness transitivity properties *)
-Theorem betweennessInnerTransAttempt : forall w x y z,
-  Between w x y ->
-  Between w y z ->
-  Between x y z.
-Proof.
-  (* This theorem requires careful application of Pasch's axiom *)
-  (* The proof is non-trivial and left for future work *)
-Admitted.
-
 Print Assumptions congruenceAddNull.
 Print Assumptions betweennessSymIff.
 Print Assumptions betweennessEndpointsEq.
 Print Assumptions betweennessTransMiddle.
-Print Assumptions betweennessInnerTransAttempt.
 
 (* Target 9: Congruence cancellation and inversion *)
 (* UNPROVABLE THEOREM - Invalid formulation *)
@@ -1368,34 +1357,6 @@ Print Assumptions congruenceEqLeft.
 Print Assumptions congruenceEqRight.
 Print Assumptions congruenceEqBoth.
 
-(* Target 29: Congruence transitivity variants *)
-Theorem congruenceTrans5 : forall a b c d e f g h i j,
-  Congruent a b c d ->
-  Congruent c d e f ->
-  Congruent e f g h ->
-  Congruent g h i j ->
-  Congruent a b i j.
-Proof.
-  intros.
-  apply congruenceChain4 with (c := c) (d := d) (e := e) (f := f) (g := g) (h := h).
-  - exact H.
-  - exact H0.
-  - exact H1.
-  - exact H2.
-Qed.
-
-Theorem congruenceTransSym2 : forall a b c d e f,
-  Congruent a b c d ->
-  Congruent c d e f ->
-  Congruent e f a b.
-Proof.
-  intros.
-  apply congruenceBinSym.
-  apply congruenceTrans4 with (c := c) (d := d).
-  - exact H.
-  - exact H0.
-Qed.
-
 (* Target 30: Betweenness with congruence preservation *)
 Theorem betweennessCongruenceId : forall a b c,
   Between a b c ->
@@ -1535,18 +1496,6 @@ Proof.
   exact Hw2.
 Qed.
 
-(* Target 35: Congruence symmetry chains *)
-Theorem congruenceSymChain2 : forall a b c d e f,
-  Congruent a b c d ->
-  Congruent c d e f ->
-  Congruent e f a b.
-Proof.
-  intros.
-  apply congruenceTransSym2 with (c := c) (d := d).
-  - exact H.
-  - exact H0.
-Qed.
-
 Theorem congruenceAllSymmetries : forall a b c d,
   Congruent a b c d ->
   Congruent a b c d /\ Congruent b a c d /\ Congruent a b d c /\ Congruent b a d c /\
@@ -1583,19 +1532,6 @@ Proof.
   apply betweennessRefl1.
 Qed.
 
-Theorem congruenceTransitive3Way : forall a b c d e f,
-  Congruent a b c d ->
-  Congruent a b e f ->
-  Congruent c d e f.
-Proof.
-  intros.
-  apply congruenceTrans4 with (c := a) (d := b).
-  - apply congruenceBinSym. exact H.
-  - exact H0.
-Qed.
-
-Print Assumptions congruenceTrans5.
-Print Assumptions congruenceTransSym2.
 Print Assumptions betweennessCongruenceId.
 Print Assumptions betweennessWithEqualSegments.
 Print Assumptions betweennessRefl123.
@@ -1608,11 +1544,9 @@ Print Assumptions distinctFromBetweenMiddle.
 Print Assumptions distinctFromBetweenEnds.
 Print Assumptions segmentConstrWithCongruence.
 Print Assumptions segmentConstrChain.
-Print Assumptions congruenceSymChain2.
 Print Assumptions congruenceAllSymmetries.
 Print Assumptions congruenceFromEqual.
 Print Assumptions betweennessFromEqual.
-Print Assumptions congruenceTransitive3Way.
 
 (*
 ========================================================================
@@ -1675,12 +1609,7 @@ analysis of each one and why it remains admitted:
    - Countermodel: Geometry where Between a a b holds for distinct points
    - Would require: Axiom betweennessLeftId or non-degeneracy axiom to prove
 
-9. betweennessInnerTransAttempt (line ~690-696)
-   Status: DUPLICATE of betweennessInnerTrans
-   - Same as betweennessInnerTrans above
-   - Left admitted for same reasons
-
-10. congruenceCancelLeft (line ~817-821)
+9. congruenceCancelLeft (line ~817-821)
     Status: PROVEN UNPROVABLE via countermodel (lines ~754-815)
     - Statement: Congruent a b c c -> Congruent a b d d -> c = d
     - The current formulation has a logical flaw making it unprovable
