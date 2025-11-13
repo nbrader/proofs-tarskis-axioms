@@ -228,7 +228,38 @@ Proof.
   intros x y a b z1 z2 H1 H2.
   destruct H1 as [Hbet1 Hcong1].
   destruct H2 as [Hbet2 Hcong2].
-  (* This requires more axioms to prove, particularly the five-segment axiom *)
+
+  (* If y = z1 or y = z2, we can use simpler reasoning *)
+  destruct (classic (y = z1)) as [Heq1 | Hneq1].
+  - (* Case y = z1 *)
+    subst.
+    (* Then Congruent z1 z1 a b, which means a = b *)
+    assert (a = b).
+    {
+      apply congruenceId with (z := z1).
+      apply congruenceBinSym.
+      exact Hcong1.
+    }
+    (* And Congruent z1 z2 a b becomes Congruent z1 z2 b b *)
+    rewrite H in Hcong2.
+    (* So z1 = z2 from Congruent z1 z2 b b *)
+    apply congruenceId with (z := b).
+    exact Hcong2.
+  - (* Case y <> z1, which is the interesting case *)
+    (* We have Between x y z1, Between x y z2, Congruent y z1 a b, Congruent y z2 a b *)
+    (* We want to show z1 = z2 *)
+
+    (* Apply five-segment with: x=x, y=y, z=z1, x'=x, y'=y, z'=z2, u=z1, u'=z2 *)
+    (* Hmm, this requires x <> y *)
+    destruct (classic (x = y)) as [Heqxy | Hneqxy].
+    + (* Case x = y *)
+      subst.
+      (* Then Between y y z1 and Between y y z2 *)
+      (* If we had betweennessEndpointsEq, we'd get y = z1 and y = z2 *)
+      (* But we don't have that, so this case is problematic *)
+      admit.
+    + (* Case x <> y - would require five-segment axiom which is defined later *)
+      admit.
 Admitted.
 
 Theorem congruenceReflLeft : forall x y, Congruent x x y y.
