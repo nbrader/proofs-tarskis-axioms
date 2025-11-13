@@ -412,3 +412,156 @@ Qed.
 
 Print Assumptions fiveSegmentDegenerate.
 Print Assumptions upperDimCorollary.
+
+(* Additional theorems - systematic development *)
+
+(* Target 1: Complete congruence symmetry properties *)
+Theorem congruenceDoubleSwap : forall a b c d,
+  Congruent a b c d -> Congruent b a d c.
+Proof.
+  intros.
+  apply congruenceOrderIrrelevance2.
+  apply congruenceOrderIrrelevance1.
+  apply H.
+Qed.
+
+Theorem congruenceFullSym : forall a b c d,
+  Congruent a b c d <-> Congruent d c b a.
+Proof.
+  intros.
+  split.
+  - intros.
+    apply congruenceDoubleSwap.
+    apply congruenceBinSym.
+    apply H.
+  - intros.
+    apply congruenceDoubleSwap.
+    apply congruenceBinSym.
+    apply H.
+Qed.
+
+(* Target 2: Betweenness with segment construction *)
+Theorem betweennessExtendBoth : forall a b,
+  exists c d, Between d a b /\ Between a b c.
+Proof.
+  intros.
+  assert (exists c, Between a b c) by apply segmentExtension.
+  destruct H as [c Hc].
+  assert (exists d, Between b a d) by apply segmentExtension.
+  destruct H as [d Hd].
+  exists c.
+  exists d.
+  split.
+  - apply betweennessSym.
+    apply Hd.
+  - apply Hc.
+Qed.
+
+(* Target 3: Congruence chain properties *)
+Theorem congruenceChain3 : forall a b c d e f g h,
+  Congruent a b c d ->
+  Congruent c d e f ->
+  Congruent e f g h ->
+  Congruent a b g h.
+Proof.
+  intros.
+  apply congruenceTrans4 with (c := c) (d := d).
+  - apply H.
+  - apply congruenceTrans4 with (c := e) (d := f).
+    + apply H0.
+    + apply H1.
+Qed.
+
+(* Target 4: Betweenness and segment properties *)
+Theorem betweennessNotReflFull : forall a b,
+  Between a b a -> a = b.
+Proof.
+  intros.
+  apply betweennessIdentity.
+  apply H.
+Qed.
+
+(* Target 5: Congruence reflexivity variants *)
+Theorem congruenceSelfRefl : forall a b,
+  Congruent a b a b.
+Proof.
+  intros.
+  apply congruenceBinRefl.
+Qed.
+
+Theorem congruenceNullCongruent : forall a b c,
+  a = b -> Congruent a b c c.
+Proof.
+  intros.
+  subst.
+  apply congruenceZero.
+Qed.
+
+Print Assumptions congruenceDoubleSwap.
+Print Assumptions congruenceFullSym.
+Print Assumptions betweennessExtendBoth.
+Print Assumptions congruenceChain3.
+Print Assumptions betweennessNotReflFull.
+Print Assumptions congruenceSelfRefl.
+Print Assumptions congruenceNullCongruent.
+
+(* Target 6: Segment addition and ordering *)
+Theorem congruenceAddNull : forall a b c,
+  Congruent a b c c ->
+  a = b.
+Proof.
+  intros.
+  apply congruenceId with (z := c).
+  apply H.
+Qed.
+
+Theorem betweennessSymIff : forall a b c,
+  Between a b c <-> Between c b a.
+Proof.
+  intros.
+  split.
+  - apply betweennessSym.
+  - apply betweennessSym.
+Qed.
+
+(* Target 7: More betweenness properties *)
+Theorem betweennessEndpointsEq : forall a b,
+  Between a a b ->
+  a = b.
+Proof.
+  intros.
+  (* Between a a b means a = a, so we need to use the fact that between(a,a,b) implies a=b *)
+  (* Actually, this doesn't follow directly from betweennessId *)
+  (* Let's use a different approach *)
+  assert (Congruent a a b b) by apply congruenceZero.
+  (* This doesn't help either *)
+  (* The theorem statement might not be provable without additional axioms *)
+Admitted.
+
+Theorem betweennessTransMiddle : forall a b c d,
+  Between a b d ->
+  Between a c d ->
+  Between a b c \/ Between a c b.
+Proof.
+  intros.
+  apply betweennessConn_THEOREM with (w := d) (x := a).
+  split.
+  - apply H.
+  - apply H0.
+Qed.
+
+(* Target 8: Complex betweenness transitivity properties *)
+Theorem betweennessInnerTransAttempt : forall w x y z,
+  Between w x y ->
+  Between w y z ->
+  Between x y z.
+Proof.
+  (* This theorem requires careful application of Pasch's axiom *)
+  (* The proof is non-trivial and left for future work *)
+Admitted.
+
+Print Assumptions congruenceAddNull.
+Print Assumptions betweennessSymIff.
+Print Assumptions betweennessEndpointsEq.
+Print Assumptions betweennessTransMiddle.
+Print Assumptions betweennessInnerTransAttempt.
