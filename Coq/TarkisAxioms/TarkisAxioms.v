@@ -379,9 +379,64 @@ Theorem betweennessInnerTrans : forall w x y z, Between w x y -> Between w y z -
 Proof.
   intros w x y z Hwxy Hwyz.
   (* We have: w---x---y and w---y---z, want: x---y---z *)
-  (* This requires a complex application of Pasch's axiom *)
-  (* Admitted for now - this is a non-trivial theorem in Tarski's geometry *)
-Admitted.
+
+  (* Strategy: We'll use connectivity to determine the order of x and y relative to z *)
+  (* First, we need to establish that both x and y lie between w and z *)
+
+  (* We need to prove Between w x z first *)
+  (* We can use Pasch's axiom cleverly here *)
+
+  (* Consider applying Pasch with the configuration:
+     We want to create a situation where we can apply betweenness connectivity *)
+
+  (* Let's use the approach of applying betweennessPasch *)
+  (* We'll apply it with u=x, v=w, x=z, y=y, z=? *)
+
+  (* Actually, let's try a different approach using segment extension *)
+  (* Get a point beyond y on the line from x *)
+  assert (exists c, Between x y c) as [c Hxyc] by apply segmentExtension.
+
+  (* Now we have: w---x---y---c and w---y---z *)
+  (* We want to show x---y---z *)
+
+  (* Apply connectivity: if we can show Both x and z are on the same side of w-y line,
+     or use Pasch to relate them *)
+
+  (* Let's try using Pasch with u=w, v=x, x=y, y=c, z=z *)
+  (* Actually, this is getting complex. Let me try the direct approach. *)
+
+  (* Apply betweennessPasch with u=x, v=w, x=y, y=?, z=z *)
+  (* We need Between x w y and Between ? z y *)
+
+  (* We have Between w x y, so by betweennessSym: Between y x w *)
+  assert (Between y x w) as Hyxw by (apply betweennessSym; exact Hwxy).
+
+  (* We have Between w y z, so by betweennessSym: Between z y w *)
+  assert (Between z y w) as Hzyw by (apply betweennessSym; exact Hwyz).
+
+  (* Now apply betweennessTrans with w, x, y, z *)
+  (* betweennessTrans : forall w x y z, (Between x y w /\ Between y z w) -> Between x y z *)
+  (* We have Between y x w and Between z y w *)
+  (* Hmm, this gives us Between y x z if we could apply it... *)
+
+  (* Let me try applying Pasch differently *)
+  (* Pasch: (Between u v x /\ Between y z x) -> exists a, Between u a z /\ Between v a y *)
+
+  (* Try with u=y, v=x, x=w, y=z, z=y *)
+  specialize betweennessPasch with (u := y) (v := x) (x := w) (y := z) (z := y).
+  intro HPasch.
+  assert (Between y x w /\ Between z y w) as Hpre by (split; [exact Hyxw | exact Hzyw]).
+  apply HPasch in Hpre.
+  destruct Hpre as [a [Hyaz Hxay]].
+
+  (* We get: Between y a y and Between x a z *)
+  (* From Between y a y, we get a = y *)
+  apply betweennessIdentity in Hyaz as Hay.
+  subst a.
+
+  (* Now we have Between x y z, which is exactly what we wanted! *)
+  exact Hxay.
+Qed.
 
 Theorem congruenceFourRefl : forall w x y z,
   Congruent w x y z -> Congruent y z w x.
@@ -1568,12 +1623,12 @@ analysis of each one and why it remains admitted:
    - Removed with documentation explaining the issue
    - Needs reformulation before it can be considered
 
-5. betweennessInnerTrans (line ~381-387)
-   Status: COMPLEX - Requires sophisticated Pasch axiom application
+5. betweennessInnerTrans (line ~378-439)
+   Status: PROVEN
    - Statement: Between w x y -> Between w y z -> Between x y z
-   - Known to be provable in Tarski's geometry
-   - Requires multiple applications of Pasch's axiom with auxiliary points
-   - This is a non-trivial theorem in the literature
+   - Proof uses Pasch's axiom with the substitution u=y, v=x, x=w, y=z, z=y
+   - Key insight: Apply betweennessSym to both hypotheses, then use Pasch
+   - The auxiliary point from Pasch is shown to equal y using betweennessIdentity
 
 6. betweennessOuterTrans (line ~397-404)
    Status: COMPLEX - Requires sophisticated Pasch axiom application
@@ -1610,11 +1665,11 @@ CODE IMPROVEMENTS:
 - Added note that congruenceTrans4 is equivalent to congruenceBinTrans
 
 PROVEN THEOREMS COUNT:
-- Approximately 120+ fully proven theorems
+- Approximately 120+ fully proven theorems (including betweennessInnerTrans)
 - 2 PROVEN UNPROVABLE via formal countermodels:
   * betweennessEndpointsEq - countermodel with degenerate betweenness
   * congruenceCancelLeft - countermodel using congruenceZero
-- 8 remain admitted due to complexity (require advanced techniques)
+- 7 remain admitted due to complexity (require advanced techniques)
 - 1 REMOVED due to malformed statement
 - 1 is partially proven (degenerate cases complete)
 
