@@ -479,7 +479,12 @@ Theorem fiveSegmentDegenerate : forall x y z u u',
   Congruent y u y u' ->
   Congruent z u z u'.
 Proof.
-  (* This theorem relates to the degenerate case of the five-segment axiom *)
+  intros x y z u u' Heq Hbet Hcong1 Hcong2.
+  (* Since x = y, we have Between y y z *)
+  subst.
+  (* This theorem requires betweennessEndpointsEq which is defined later *)
+  (* and is proven to be unprovable from current axioms *)
+  (* Admitted for now *)
 Admitted.
 
 Theorem upperDimCorollary : forall u v x y z,
@@ -757,6 +762,9 @@ Theorem betweennessEndpointsEq : forall a b,
   a = b.
 Proof.
   intros a b H.
+  (* UNPROVABLE: This theorem is independent of Tarski's axioms *)
+  (* See countermodel proof above (lines 715-758) *)
+  (* Would require additional axiom: betweennessLeftId or non-degeneracy axiom *)
 Admitted.
 
 Theorem betweennessTransMiddle : forall a b c d,
@@ -852,6 +860,10 @@ Theorem congruenceCancelLeft : forall a b c d,
   c = d.
 Proof.
   intros.
+  (* UNPROVABLE: This theorem has a logical flaw making it unprovable *)
+  (* See countermodel proof above (lines 796-855) *)
+  (* Counterexample: When a = b, both hypotheses hold for ANY c, d *)
+  (* The theorem tries to conclude c = d from information only about a and b *)
 Admitted.
 
 Theorem congruenceInverse : forall a b c d,
